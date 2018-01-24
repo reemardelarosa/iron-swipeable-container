@@ -14,12 +14,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <title>iron-swipeable-container tests</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-  <script src="../../web-component-tester/browser.js"></script>
-  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+  <script src="../../../@webcomponents/webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../wct-browser-legacy/browser.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js" type="module"></script>
 
-  <link rel="import" href="../iron-swipeable-container.html">
-  <link rel="import" href="test-element.html">
+  <script type="module" src="../iron-swipeable-container.js"></script>
+  <script type="module" src="./test-element.js"></script>
 
 </head>
 <style>
@@ -70,184 +70,186 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </template>
   </test-fixture>
 
-  <script>
+  <script type="module">
+import '../iron-swipeable-container.js';
+import './test-element.js';
 
-    suite('native elements', function() {
-      test('dragging less than halfway does not swipe', function(done) {
-        var container = fixture('basic');
-        var element = container.querySelector('#native');
+suite('native elements', function() {
+  test('dragging less than halfway does not swipe', function(done) {
+    var container = fixture('basic');
+    var element = container.querySelector('#native');
 
-        Polymer.Base.async(function() {
-          var swipeEventHandler = sinon.spy();
-          container.addEventListener('iron-swipe', swipeEventHandler);
+    Polymer.Base.async(function() {
+      var swipeEventHandler = sinon.spy();
+      container.addEventListener('iron-swipe', swipeEventHandler);
 
-          expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
-          MockInteractions.track(element, 10, 0);
+      expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
+      MockInteractions.track(element, 10, 0);
 
-          Polymer.Base.async(function(){
-            expect(swipeEventHandler.callCount).to.be.equal(0);
-            expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
-            done();
-          }, 1);
-        });
-      });
-
-      test('dragging more than halfway swipes it', function(done) {
-        var container = fixture('basic');
-        var element = container.querySelector('#native');
-
-        Polymer.Base.async(function() {
-          expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
-
-          container.addEventListener('iron-swipe', function(event) {
-            expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(1);
-            done();
-          });
-
-          MockInteractions.track(element, 60, 0);
-        });
-      });
-
-      test('an element with disable-swipe cannot be swiped', function(done) {
-        var container = fixture('child-no-swipe');
-        var element = container.querySelector('#native');
-
-        Polymer.Base.async(function() {
-          var swipeEventHandler = sinon.spy();
-          container.addEventListener('iron-swipe', swipeEventHandler);
-
-          expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
-          MockInteractions.track(element, 60, 0);  // this amount would normally swipe.
-
-          Polymer.Base.async(function(){
-            expect(swipeEventHandler.callCount).to.be.equal(0);
-            expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
-            done();
-          }, 1);
-        });
-      });
+      Polymer.Base.async(function(){
+        expect(swipeEventHandler.callCount).to.be.equal(0);
+        expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
+        done();
+      }, 1);
     });
+  });
 
-    suite('custom elements', function() {
-      test('dragging less than halfway does not swipe', function(done) {
-        var container = fixture('basic');
-        var element = container.querySelector('#custom');
+  test('dragging more than halfway swipes it', function(done) {
+    var container = fixture('basic');
+    var element = container.querySelector('#native');
 
-        var swipeEventHandler = sinon.spy();
-        container.addEventListener('iron-swipe', swipeEventHandler);
+    Polymer.Base.async(function() {
+      expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
 
-        Polymer.Base.async(function() {
-          expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
-          MockInteractions.track(element, 10, 0);
-
-          Polymer.Base.async(function(){
-            expect(swipeEventHandler.callCount).to.be.equal(0);
-            expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
-            done();
-          }, 1);
-        });
+      container.addEventListener('iron-swipe', function(event) {
+        expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(1);
+        done();
       });
 
-      test('dragging more than halfway swipes it', function(done) {
-        var container = fixture('basic');
-        var element = container.querySelector('#custom');
-
-        Polymer.Base.async(function() {
-          expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
-
-          container.addEventListener('iron-swipe', function(event) {
-            expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(1);
-            done();
-          });
-
-          MockInteractions.track(element, 60, 0);
-        });
-      });
-
-      test('an element with disable-swipe cannot be swiped', function(done) {
-        var container = fixture('child-no-swipe');
-        var element = container.querySelector('#custom');
-
-        Polymer.Base.async(function() {
-          var swipeEventHandler = sinon.spy();
-          container.addEventListener('iron-swipe', swipeEventHandler);
-
-          expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
-          MockInteractions.track(element, 60, 0);  // this amount would normally swipe.
-
-          Polymer.Base.async(function(){
-            expect(swipeEventHandler.callCount).to.be.equal(0);
-            expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
-            done();
-          }, 1);
-        });
-      });
+      MockInteractions.track(element, 60, 0);
     });
+  });
 
-    suite('no swipe', function() {
-      test('dragging a native element more than halfway does not swipe', function(done) {
-        var container = fixture('no-swipe');
-        var element = container.querySelector('#native');
+  test('an element with disable-swipe cannot be swiped', function(done) {
+    var container = fixture('child-no-swipe');
+    var element = container.querySelector('#native');
 
-        var swipeEventHandler = sinon.spy();
-        container.addEventListener('iron-swipe', swipeEventHandler);
+    Polymer.Base.async(function() {
+      var swipeEventHandler = sinon.spy();
+      container.addEventListener('iron-swipe', swipeEventHandler);
 
-        Polymer.Base.async(function() {
-          expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
-          MockInteractions.track(element, 60, 0);
+      expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
+      MockInteractions.track(element, 60, 0);  // this amount would normally swipe.
 
-          Polymer.Base.async(function(){
-            expect(swipeEventHandler.callCount).to.be.equal(0);
-            expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
-            done();
-          }, 1);
-        });
-      });
-
-      test('dragging a custom element more than halfway does not swipe', function(done) {
-        var container = fixture('no-swipe');
-        var element = container.querySelector('#custom');
-
-        var swipeEventHandler = sinon.spy();
-        container.addEventListener('iron-swipe', swipeEventHandler);
-
-        Polymer.Base.async(function() {
-          expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
-          MockInteractions.track(element, 60, 0);
-
-          Polymer.Base.async(function(){
-            expect(swipeEventHandler.callCount).to.be.equal(0);
-            expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
-            done();
-          }, 1);
-        });
-      });
+      Polymer.Base.async(function(){
+        expect(swipeEventHandler.callCount).to.be.equal(0);
+        expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
+        done();
+      }, 1);
     });
+  });
+});
 
-    suite('nested swipe', function() {
-      test('dragging an element nested in two containers does not swipe both', function(done) {
-        var outer = fixture('nested-swipe');
-        var inner = outer.querySelector('#inner');
-        var element = inner.querySelector('#native');
-        var innerTransforms = [];
+suite('custom elements', function() {
+  test('dragging less than halfway does not swipe', function(done) {
+    var container = fixture('basic');
+    var element = container.querySelector('#custom');
 
-        var swipeEventHandler = sinon.spy();
-        outer.addEventListener('iron-swipe', swipeEventHandler);
+    var swipeEventHandler = sinon.spy();
+    container.addEventListener('iron-swipe', swipeEventHandler);
 
-        Polymer.Base.async(function() {
-          element.addEventListener('mousemove', function(event) {
-            innerTransforms.push(inner.style.transform);
-          });
+    Polymer.Base.async(function() {
+      expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
+      MockInteractions.track(element, 10, 0);
 
-          inner.addEventListener('iron-swipe', function(event) {
-            expect(innerTransforms.join('')).to.be.equal('');
-            done();
-          });
-
-          MockInteractions.track(element, 60, 0);
-        });
-      });
+      Polymer.Base.async(function(){
+        expect(swipeEventHandler.callCount).to.be.equal(0);
+        expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
+        done();
+      }, 1);
     });
-  </script>
+  });
+
+  test('dragging more than halfway swipes it', function(done) {
+    var container = fixture('basic');
+    var element = container.querySelector('#custom');
+
+    Polymer.Base.async(function() {
+      expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
+
+      container.addEventListener('iron-swipe', function(event) {
+        expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(1);
+        done();
+      });
+
+      MockInteractions.track(element, 60, 0);
+    });
+  });
+
+  test('an element with disable-swipe cannot be swiped', function(done) {
+    var container = fixture('child-no-swipe');
+    var element = container.querySelector('#custom');
+
+    Polymer.Base.async(function() {
+      var swipeEventHandler = sinon.spy();
+      container.addEventListener('iron-swipe', swipeEventHandler);
+
+      expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
+      MockInteractions.track(element, 60, 0);  // this amount would normally swipe.
+
+      Polymer.Base.async(function(){
+        expect(swipeEventHandler.callCount).to.be.equal(0);
+        expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
+        done();
+      }, 1);
+    });
+  });
+});
+
+suite('no swipe', function() {
+  test('dragging a native element more than halfway does not swipe', function(done) {
+    var container = fixture('no-swipe');
+    var element = container.querySelector('#native');
+
+    var swipeEventHandler = sinon.spy();
+    container.addEventListener('iron-swipe', swipeEventHandler);
+
+    Polymer.Base.async(function() {
+      expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
+      MockInteractions.track(element, 60, 0);
+
+      Polymer.Base.async(function(){
+        expect(swipeEventHandler.callCount).to.be.equal(0);
+        expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
+        done();
+      }, 1);
+    });
+  });
+
+  test('dragging a custom element more than halfway does not swipe', function(done) {
+    var container = fixture('no-swipe');
+    var element = container.querySelector('#custom');
+
+    var swipeEventHandler = sinon.spy();
+    container.addEventListener('iron-swipe', swipeEventHandler);
+
+    Polymer.Base.async(function() {
+      expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
+      MockInteractions.track(element, 60, 0);
+
+      Polymer.Base.async(function(){
+        expect(swipeEventHandler.callCount).to.be.equal(0);
+        expect(Polymer.dom(container).queryDistributedElements('*').length).to.be.equal(2);
+        done();
+      }, 1);
+    });
+  });
+});
+
+suite('nested swipe', function() {
+  test('dragging an element nested in two containers does not swipe both', function(done) {
+    var outer = fixture('nested-swipe');
+    var inner = outer.querySelector('#inner');
+    var element = inner.querySelector('#native');
+    var innerTransforms = [];
+
+    var swipeEventHandler = sinon.spy();
+    outer.addEventListener('iron-swipe', swipeEventHandler);
+
+    Polymer.Base.async(function() {
+      element.addEventListener('mousemove', function(event) {
+        innerTransforms.push(inner.style.transform);
+      });
+
+      inner.addEventListener('iron-swipe', function(event) {
+        expect(innerTransforms.join('')).to.be.equal('');
+        done();
+      });
+
+      MockInteractions.track(element, 60, 0);
+    });
+  });
+});
+</script>
 </body>
 </html>
